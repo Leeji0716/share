@@ -1,5 +1,6 @@
 package com.example.ms1.note.notebook;
 
+import com.example.ms1.note.MainService;
 import com.example.ms1.note.note.Note;
 import com.example.ms1.note.note.NoteService;
 import lombok.RequiredArgsConstructor;
@@ -11,27 +12,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 @RequiredArgsConstructor
 public class NotebookController {
-
-
-    private final NotebookRepository notebookRepository;
-    private final NoteService noteService;
+    private final NotebookService notebookService;
+    private final MainService mainService;
 
     @PostMapping("/books/write")
     public String write() {
-
-        Notebook notebook = new Notebook();
-        notebook.setName("새노트북");
-
-        notebookRepository.save(notebook);
-        noteService.saveDefault(notebook);
-
+        mainService.saveDefaultNotebook();
         return "redirect:/";
-
     }
 
     @GetMapping("/books/{id}")
     public String detail(@PathVariable("id") Long id) {
-        Notebook notebook = notebookRepository.findById(id).orElseThrow();
+        Notebook notebook = notebookService.getNotebook(id);
         Note note = notebook.getNoteList().get(0);
 
         return "redirect:/books/%d/notes/%d".formatted(id, note.getId());

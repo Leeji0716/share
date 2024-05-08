@@ -1,0 +1,62 @@
+package com.example.ms1.note;
+
+import com.example.ms1.note.note.Note;
+import com.example.ms1.note.note.NoteService;
+import com.example.ms1.note.notebook.Notebook;
+import com.example.ms1.note.notebook.NotebookService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class MainService {
+    private final NoteService noteService;
+    private final NotebookService notebookService;
+
+    public MainDataDto defaultMainDataDto(){
+        List<Notebook> notebookList = this.getNotebookList();
+        if (notebookList.isEmpty()) {
+            this.saveDefaultNotebook();
+        }
+        Notebook targetNotebook = notebookList.get(0);
+        List<Note> noteList = targetNotebook.getNoteList();
+        Note targetNote = noteList.get(0);
+
+        MainDataDto mainDataDto = new MainDataDto(notebookList, targetNotebook, noteList, targetNote);
+        return mainDataDto;
+    }
+
+    public MainDataDto mainDataDto(Long notebookId, Long id){
+        MainDataDto mainDataDto = this.defaultMainDataDto();
+        Notebook targetNotebook = notebookService.getNotebook(notebookId);
+        Note targetNote = noteService.getNote(id);
+        List<Note> noteList = targetNotebook.getNoteList();
+
+        mainDataDto.setTargetNotebook(targetNotebook);
+        mainDataDto.setTargetNote(targetNote);
+        mainDataDto.setNoteList(noteList);
+
+        return mainDataDto;
+    }
+
+    public Notebook getNotebook(long id){
+        Notebook notebook = notebookService.getNotebook(id);
+        return notebook;
+    }
+
+    public List<Notebook> getNotebookList(){
+        List<Notebook> notebookList = notebookService.getNotebookList();
+        return notebookList;
+    }
+
+    public void saveDefaultNotebook(){
+        Notebook notebook = new Notebook();
+        notebook.setName("새노트북");
+
+        notebookService.save(notebook);
+        noteService.saveDefaultNote(notebook);
+    }
+}
