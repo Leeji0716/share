@@ -52,11 +52,23 @@ public class MainService {
         return notebookList;
     }
 
-    public void saveDefaultNotebook(){
+    public Notebook saveDefaultNotebook(){
         Notebook notebook = new Notebook();
         notebook.setName("새노트북");
 
+        Note note = noteService.saveDefaultNote(notebook);
+        notebook.addNote(note);
         notebookService.save(notebook);
-        noteService.saveDefaultNote(notebook);
+
+        return notebook;
+    }
+
+    public void saveGroupNotebook(long notebookId){
+        Notebook parent = notebookService.getNotebook(notebookId);
+
+        Notebook child = this.saveDefaultNotebook();
+
+        parent.addChild(child);
+        notebookService.save(parent);
     }
 }
