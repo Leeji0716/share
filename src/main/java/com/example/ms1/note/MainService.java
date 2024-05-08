@@ -19,7 +19,7 @@ public class MainService {
     public MainDataDto defaultMainDataDto(){
         List<Notebook> notebookList = this.getNotebookList();
         if (notebookList.isEmpty()) {
-            this.saveDefaultNotebook();
+            notebookList.add(this.saveDefaultNotebook());
         }
         Notebook targetNotebook = notebookList.get(0);
         List<Note> noteList = targetNotebook.getNoteList();
@@ -56,7 +56,7 @@ public class MainService {
         Notebook notebook = new Notebook();
         notebook.setName("새노트북");
 
-        Note note = noteService.saveDefaultNote(notebook);
+        Note note = noteService.saveDefaultNote();
         notebook.addNote(note);
         notebookService.save(notebook);
 
@@ -70,5 +70,12 @@ public class MainService {
 
         parent.addChild(child);
         notebookService.save(parent);
+    }
+    public Notebook addNotebook(long notebookId){
+        Notebook notebook = this.notebookService.getNotebook(notebookId);
+        Note note = noteService.saveDefaultNote();
+        notebook.addNote(note);
+
+        return notebookService.save(notebook);
     }
 }

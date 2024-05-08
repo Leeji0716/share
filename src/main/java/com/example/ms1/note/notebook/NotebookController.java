@@ -23,7 +23,6 @@ public class NotebookController {
 
     @PostMapping("/groups/{notebookId}/books/write")
     public String groupWrite(@PathVariable("notebookId") Long notebookId) {
-
         mainService.saveGroupNotebook(notebookId);
 
         return "redirect:/";

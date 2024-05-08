@@ -23,10 +23,8 @@ public class NoteController {
 
     @PostMapping("/write")
     public String write(@PathVariable("notebookId") Long notebookId) {
-        Notebook notebook = mainService.getNotebook(notebookId);
-        Note note = noteService.saveDefaultNote(notebook);
-        notebook.addNote(note);
-        return "redirect:/books/" + notebook.getId() + "/notes/" + note.getId();
+        Notebook notebook = mainService.addNotebook(notebookId);
+        return "redirect:/books/" + notebookId + "/notes/" + notebook.getNoteList().get(0).getId();
     }
 
     @GetMapping("/{id}")

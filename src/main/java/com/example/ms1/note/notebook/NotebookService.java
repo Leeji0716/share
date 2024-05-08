@@ -22,7 +22,7 @@ public class NotebookService {
         return notebook;
     }
 
-    public void save(Notebook notebook) {
-        notebookRepository.save(notebook);
+    public Notebook save(Notebook notebook) {
+        return notebookRepository.save(notebook);
     }
 }
