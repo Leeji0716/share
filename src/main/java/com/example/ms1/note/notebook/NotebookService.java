@@ -25,4 +25,8 @@ public class NotebookService {
     public Notebook save(Notebook notebook) {
         return notebookRepository.save(notebook);
     }
+
+    public void delete(Notebook notebook) {
+        notebookRepository.delete(notebook);
+    }
 }
