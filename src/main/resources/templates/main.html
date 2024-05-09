@@ -48,9 +48,6 @@ th:with="notebookList=${mainDataDto.notebookList},
             <form th:action="@{|/groups/${targetNotebook.id}/books/write|}" method="post">
                 <input type="submit" value="하위 노트북 추가">
             </form>
-            <form th:action="@{|/books/${targetNotebook.id}/delete|}" method="post">
-                <input type="submit" value="삭제">
-            </form>
         </div>
         <div class="bg-red-300 w-[20%] h-[800px] text-center ">
             <ul class="h-[100%] overflow-scroll">
