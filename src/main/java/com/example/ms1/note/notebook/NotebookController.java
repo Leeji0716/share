@@ -25,7 +25,7 @@ public class NotebookController {
     public String groupWrite(@PathVariable("notebookId") Long notebookId) {
         mainService.saveGroupNotebook(notebookId);
 
-        return "redirect:/";
+        return "redirect:/books/" + notebookId;
     }
 
     @GetMapping("/books/{id}")
@@ -39,7 +39,7 @@ public class NotebookController {
     @PostMapping("/books/{id}/delete")
     public String deleteNoteBook(@PathVariable("id") Long id){
         Notebook notebook = notebookService.getNotebook(id);
-        mainService.delete(notebook);
+        notebookService.delete(notebook);
         return "redirect:/";
     }
 }
