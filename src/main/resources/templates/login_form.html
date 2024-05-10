@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" type="text/css"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<div class="container my-3 flex justify-center">
+    <div class="w-[800px]">
+        <form th:action="@{/login}" method="post" class="flex flex-col gap-8">
+            <div th:if="${param.error}">
+                <div class="alert alert-danger">
+                    사용자ID 또는 비밀번호를 확인해 주세요.
+                </div>
+            </div>
+            <input type="text" name="username" id="username" class="input" placeholder="login ID">
+            <input type="password" name="password" id="password" class="input" placeholder="password">
+            <button type="submit" class="btn btn-primary">로그인</button>
+            <a href="/signup" class="btn btn-primary">회원가입</a>
+            <a href="/oauth2/authorization/google" class="btn btn-primary">구글로그인</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>

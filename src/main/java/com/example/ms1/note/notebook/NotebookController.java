@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -34,5 +35,25 @@ public class NotebookController {
         Note note = notebook.getNoteList().get(0);
 
         return "redirect:/books/%d/notes/%d".formatted(id, note.getId());
+    }
+
+    @PostMapping("/books/{id}/delete")
+    public String delete(@PathVariable("id") Long id) {
+        Notebook notebook = notebookService.getNotebook(id);
+        notebookService.delete(notebook);
+        return "redirect:/";
+    }
+
+    @PostMapping("/books/{id}/update")
+    public String update(@PathVariable("id") Long id, String targetNotebookName,
+                         Long targetNoteId) {
+        notebookService.update(id, targetNotebookName);
+        return "redirect:/books/" + id + "/notes/" + targetNoteId;
+    }
+
+    @PostMapping("/books/{id}/move")
+    public String move(@PathVariable("id") Long id, Long moveTarget) {
+        notebookService.move(id, moveTarget);
+        return "redirect:/books/" + id;
     }
 }

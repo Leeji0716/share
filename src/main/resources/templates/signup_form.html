@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" type="text/css"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<div class="container my-3 flex justify-center">
+    <div class="w-[800px]">
+        <form th:action="@{/signup}" th:object="${userCreateForm}" method="post" class="flex flex-col gap-8">
+            <div th:if="${#fields.hasErrors('username')}" class="alert alert-error" th:errors="*{username}"></div>
+            <input type="text" th:field="*{username}" class="input" placeholder="user ID">
+
+            <div th:if="${#fields.hasErrors('password')}" class="alert alert-error" th:errors="*{password}"></div>
+            <input type="password" th:field="*{password}" class="input" placeholder="password">
+
+            <div th:if="${#fields.hasErrors('nickname')}" class="alert alert-error" th:errors="*{nickname}"></div>
+            <input type="text" th:field="*{nickname}" class="input" placeholder="nickname">
+
+            <div th:if="${#fields.hasErrors('email')}" class="alert alert-error" th:errors="*{email}"></div>
+            <input type="email" th:field="*{email}" class="input" placeholder="email">
+
+            <button type="submit" class="btn btn-primary">회원가입</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

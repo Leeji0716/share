@@ -17,7 +17,7 @@ public class MainService {
     private final NotebookService notebookService;
 
     public MainDataDto defaultMainDataDto(){
-        List<Notebook> notebookList = this.getNotebookList();
+        List<Notebook> notebookList = notebookService.getTopNotebookList();
         if (notebookList.isEmpty()) {
             notebookList.add(this.saveDefaultNotebook());
         }
@@ -78,12 +78,4 @@ public class MainService {
 
         return notebookService.save(notebook);
     }
-
-//    public void delete(Notebook notebook){
-//        List<Note> noteList = notebook.getNoteList();
-//        for (Note note : noteList){
-//            noteService.delete(note);
-//        }
-//        notebookService.delete(notebook);
-//    }
 }
