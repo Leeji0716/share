@@ -32,7 +32,7 @@ public class NoteController {
     @GetMapping("/{id}")
     public String detail(Model model, @PathVariable("notebookId") Long notebookId, @PathVariable("id") Long id,
                          ParamHandler paramHandler) {
-        MainDataDto mainDataDto = mainService.mainDataDto(notebookId, id, paramHandler.getKeyword());
+        MainDataDto mainDataDto = mainService.mainDataDto(notebookId, id, paramHandler.getKeyword(), paramHandler.getSort());
 
         model.addAttribute("mainDataDto", mainDataDto);
         return "main";

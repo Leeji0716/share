@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,26 +33,24 @@ public class MainService {
         return mainDataDto;
     }
 
-    public MainDataDto mainDataDto(Long notebookId, Long id, String keyword){
+    public MainDataDto mainDataDto(Long notebookId, Long id, String keyword, String sort){
         MainDataDto mainDataDto = this.defaultMainDataDto(keyword);
         Notebook targetNotebook = notebookService.getNotebook(notebookId);
         Note targetNote = noteService.getNote(id);
-        List<Note> noteList = targetNotebook.getNoteList();
 
         mainDataDto.setTargetNotebook(targetNotebook);
         mainDataDto.setTargetNote(targetNote);
-        mainDataDto.setNoteList(noteList);
+
+        List<Note> sortedNoteList = new ArrayList<>();
+        if(sort.equals("Date")){
+            sortedNoteList = noteService.getSortedListByCreateDate(targetNotebook);
+        }else{
+            sortedNoteList = noteService.getSortedListByTitle(targetNotebook);
+        }
+        mainDataDto.setNoteList(sortedNoteList);
 
         return mainDataDto;
     }
-//
-//    public MainDataDto mainDataDtoList(Long notebookId, Long id, List<Note> noteList){
-//        MainDataDto mainDataDto = this.mainDataDto(notebookId, id);
-//
-//        mainDataDto.setNoteList(noteList);
-//
-//        return mainDataDto;
-//    }
 
     public Notebook getNotebook(long id){
         Notebook notebook = notebookService.getNotebook(id);

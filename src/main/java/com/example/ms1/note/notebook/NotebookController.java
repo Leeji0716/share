@@ -37,21 +37,15 @@ public class NotebookController {
     }
 
     @GetMapping("/books/{id}")
-    public String detail(@PathVariable("id") Long id, @RequestParam(value = "sort", defaultValue = "Date") String sort, Model model,
-                         ParamHandler paramHandler) {
+    public String detail(@PathVariable("id") Long id, Model model, ParamHandler paramHandler) {
         Notebook notebook = notebookService.getNotebook(id);
-        List<Note> noteList = notebookService.getNoteList(notebook, sort);
-        for (Note note : noteList){
-            System.out.println(note.getTitle());
-        }
 
-        Note note = noteList.get(0);
-        MainDataDto mainDataDto = mainService.mainDataDto(id, note.getId(), paramHandler.getKeyword());
-        mainDataDto.setNoteList(noteList);
+
+        MainDataDto mainDataDto = mainService.mainDataDto(id, notebook.getNoteList().get(0).getId(), paramHandler.getKeyword(), paramHandler.getSort());
 
         model.addAttribute("mainDataDto", mainDataDto);
 
-        return paramHandler.getRedirectUrl("/books/%d/notes/%d".formatted(id, note.getId()));
+        return paramHandler.getRedirectUrl("/books/%d/notes/%d".formatted(id, notebook.getNoteList().get(0).getId()));
     }
 
     @PostMapping("/books/{id}/delete")
