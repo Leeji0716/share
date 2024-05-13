@@ -36,5 +36,12 @@ public class NoteService {
     }
 
 
+    public List<Note> getNoteList() {
+        List<Note> noteList = noteRepository.findAll();
+        return noteList;
+    }
 
+    public List<Note> getNoteListByKeyword(String keyword) {
+        return noteRepository.findByTitleContaining(keyword);
+    }
 }

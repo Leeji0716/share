@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
     <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script src="https://kit.fontawesome.com/4c7ae19c08.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <li th:fragment="noteTree(notebookList, targetNotebook)" th:each="notebook : ${notebookList}"
@@ -15,7 +16,7 @@
         <details open>
             <summary class="flex p-0"><a th:class="${basic}"
                                          th:classappend="${notebook.id == targetNotebook.id} ? 'bg-blue-600':''"
-                                         th:href="@{|/books/${notebook.id}|}"
+                                         th:href="@{|/books/${notebook.id}?keyword=${paramHandler.keyword}|}"
                                          th:text="${notebook.name}"></a></summary>
             <ul>
                 <li th:replace="main::noteTree(${notebook.children}, ${targetNotebook})"></li>
@@ -25,7 +26,7 @@
     <th:block th:if="${#lists.isEmpty(notebook.children)}">
         <a th:class="${basic}"
            th:classappend="${notebook.id == targetNotebook.id} ? 'bg-blue-600' : '' "
-           th:href="@{|/books/${notebook.id}|}" th:text="${notebook.name}"></a>
+           th:href="@{|/books/${notebook.id}?keyword=${paramHandler.keyword}|}" th:text="${notebook.name}"></a>
     </th:block>
 </li>
 
@@ -59,7 +60,10 @@
 th:with="notebookList=${mainDataDto.notebookList},
          targetNotebook=${mainDataDto.targetNotebook},
          noteList=${mainDataDto.noteList},
-         targetNote=${mainDataDto.targetNote}">
+         targetNote=${mainDataDto.targetNote},
+         searchedNotebookList=${mainDataDto.searchedNotebookList},
+         searchedNoteList=${mainDataDto.searchedNoteList}">
+    <input type="hidden" id="isSearchModal" th:value="${paramHandler.isSearchModal}">
     <div class="bg-blue-300">
         <a href="/">logo</a>
     </div>
@@ -99,7 +103,7 @@ th:with="notebookList=${mainDataDto.notebookList},
             </div>
 
             <!-- The button to open modal -->
-            <label for="my_modal_4" class="btn">노트 이동</label>
+            <label for="my_modal_4" class="btn">노트북 이동</label>
             <!-- Put this part before </body> tag -->
             <input type="checkbox" id="my_modal_4" class="modal-toggle" />
             <div class="modal" role="dialog">
@@ -115,18 +119,48 @@ th:with="notebookList=${mainDataDto.notebookList},
                     </div>
                 </div>
             </div>
+            <!-- The button to open modal -->
+            <label for="searchModal" class="btn">검색</label>
+            <!-- Put this part before </body> tag -->
+            <input type="checkbox" id="searchModal" class="modal-toggle" />
+            <div class="modal" role="dialog">
+                <div class="modal-box h-[550px]">
+                    <div class="h-[15%]">
+                        <form action="/" class="flex justify-center gap-5">
+                            <input type="text" name="keyword" class="input" th:value="${paramHandler.keyword}" placeholder="키워드를 입력하세요.">
+                            <input type="hidden" name="isSearchModal" value="true">
+                            <input type="submit" value="검색" class="btn">
+                        </form>
+                    </div>
+                    <ul class="h-[70%] border overflow-scroll" th:with="itemHover='hover:bg-blue-600 hover:text-white p-[10px] flex', itemAnchorClass='inline-block w-[100%]'">
+                        <li th:each="notebook : ${searchedNotebookList}" th:class="${itemHover}">
+                            <i class="fa-solid fa-book p-[10px]"></i>
+                            <a th:href="@{|/books/${notebook.id}?keyword=${paramHandler.keyword}|}" th:text="${notebook.name}" th:class="${itemAnchorClass}"></a>
+                        </li>
+                        <li th:each="note : ${searchedNoteList}" th:class="${itemHover}">
+                            <i class="fa-solid fa-note-sticky p-[10px]"></i>
+                            <a th:href="@{|/books/${note.notebook.id}/notes/${note.id}|}" th:text="${note.title}" th:class="${itemAnchorClass}"></a>
+                        </li>
+                    </ul>
+                    <div class="modal-action h-[15%]">
+                        <label for="searchModal" class="btn">Close!</label>
+                    </div>
+                </div>
+            </div>
         </div>
+
         <div class="bg-red-300 w-[20%] h-[800px] text-center ">
             <ul class="h-[100%] overflow-scroll">
                 <li th:each="note : ${noteList}" th:class="${note.id == targetNote.id} ? 'bg-blue-600' : ''">
-                    <a th:href="@{|/books/${targetNotebook.id}/notes/${note.id}|}" th:text="${note.title}"></a>
+                    <a th:href="@{|/books/${targetNotebook.id}/notes/${note.id}?keyword=${paramHandler.keyword}&isSearchModal=${paramHandler.isSearchModal}|}" th:text="${note.title}"></a>
                 </li>
             </ul>
             <form th:action="@{|/books/${targetNotebook.id}/notes/write|}" method="post">
                 <input type="submit" value="추가">
             </form>
+            <a th:href="@{|/books/${targetNotebook.id}?sort=Date|}" class="recommend btn btn-sm btn-outline-secondary">최신순</a>
+            <a th:href="@{|/books/${targetNotebook.id}?sort=Title|}" class="recommend btn btn-sm btn-outline-secondary">제목순</a>
         </div>
-
         <div class="bg-green-300 w-[60%]">
             <form th:action="@{|/books/${targetNotebook.id}/notes/${targetNote.id}/update|}" method="post"
                   id="updateForm">
@@ -150,7 +184,6 @@ th:with="notebookList=${mainDataDto.notebookList},
         </div>
     </div>
 </div>
-</body>
 <script>
     var simplemde = new SimpleMDE({element:document.getElementById("content")});
 
@@ -167,5 +200,13 @@ th:with="notebookList=${mainDataDto.notebookList},
             form.submit();
         }
     }
+
+    const searchModalCheckbox = document.querySelector("#searchModal");
+    const isSearchModal = document.querySelector("#isSearchModal").value;
+    if (JSON.parse(isSearchModal)) {
+        searchModalCheckbox.checked = true;
+    }
+
 </script>
+</body>
 </html>

@@ -16,7 +16,7 @@ public class MainService {
     private final NoteService noteService;
     private final NotebookService notebookService;
 
-    public MainDataDto defaultMainDataDto(){
+    public MainDataDto defaultMainDataDto(String keyword){
         List<Notebook> notebookList = notebookService.getTopNotebookList();
         if (notebookList.isEmpty()) {
             notebookList.add(this.saveDefaultNotebook());
@@ -25,12 +25,15 @@ public class MainService {
         List<Note> noteList = targetNotebook.getNoteList();
         Note targetNote = noteList.get(0);
 
-        MainDataDto mainDataDto = new MainDataDto(notebookList, targetNotebook, noteList, targetNote);
+        List<Notebook> searchedNotebookList = notebookService.getNotebookListByKeyword(keyword);
+        List<Note> searchedNoteList = noteService.getNoteListByKeyword(keyword);
+
+        MainDataDto mainDataDto = new MainDataDto(notebookList, targetNotebook, noteList, targetNote, searchedNotebookList, searchedNoteList);
         return mainDataDto;
     }
 
-    public MainDataDto mainDataDto(Long notebookId, Long id){
-        MainDataDto mainDataDto = this.defaultMainDataDto();
+    public MainDataDto mainDataDto(Long notebookId, Long id, String keyword){
+        MainDataDto mainDataDto = this.defaultMainDataDto(keyword);
         Notebook targetNotebook = notebookService.getNotebook(notebookId);
         Note targetNote = noteService.getNote(id);
         List<Note> noteList = targetNotebook.getNoteList();
@@ -41,6 +44,14 @@ public class MainService {
 
         return mainDataDto;
     }
+//
+//    public MainDataDto mainDataDtoList(Long notebookId, Long id, List<Note> noteList){
+//        MainDataDto mainDataDto = this.mainDataDto(notebookId, id);
+//
+//        mainDataDto.setNoteList(noteList);
+//
+//        return mainDataDto;
+//    }
 
     public Notebook getNotebook(long id){
         Notebook notebook = notebookService.getNotebook(id);

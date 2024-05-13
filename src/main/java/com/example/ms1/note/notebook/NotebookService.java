@@ -4,10 +4,14 @@ import com.example.ms1.note.MainDataDto;
 import com.example.ms1.note.note.Note;
 import com.example.ms1.note.note.NoteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,5 +58,22 @@ public class NotebookService {
 
         notebook.setParent(targetNote);
         notebookRepository.save(notebook);
+    }
+    public List<Note> getNoteList(Notebook notebook, String sort) {
+        List<Note> noteList = notebook.getNoteList();
+        if ("Date".equals(sort)) {
+            noteList = noteList.stream()
+                    .sorted(Comparator.comparing(Note::getCreateDate).reversed())
+                    .collect(Collectors.toList());
+        }else if ("Title".equals(sort)){
+            noteList = noteList.stream()
+                    .sorted(Comparator.comparing(Note::getTitle))
+                    .collect(Collectors.toList());
+        }
+        return noteList;
+    }
+
+    public List<Notebook> getNotebookListByKeyword(String keyword) {
+        return notebookRepository.findByNameContaining(keyword);
     }
 }

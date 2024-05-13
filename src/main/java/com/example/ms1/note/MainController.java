@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -19,9 +20,10 @@ public class MainController {
     private final MainService mainService;
 
     @RequestMapping("/")
-    public String main(Model model) {
-        MainDataDto mainDataDto = mainService.defaultMainDataDto();
+    public String main(Model model, ParamHandler paramHandler) {
+        MainDataDto mainDataDto = mainService.defaultMainDataDto(paramHandler.getKeyword());
         model.addAttribute("mainDataDto", mainDataDto);
+
         return "main";
     }
 
